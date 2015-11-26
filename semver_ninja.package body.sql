@@ -314,6 +314,288 @@ as
 	
 	end inc;
 
+	function major (
+		semver						in				varchar2
+	)
+	return number
+	
+	as
+	
+		l_semver			semver_rec;
+		l_ret_val			number := -1;
+	
+	begin
+	
+		dbms_application_info.set_action('major');
+
+		l_semver := parse_semver(semver);
+
+		l_ret_val := l_semver.major;
+	
+		dbms_application_info.set_action(null);
+	
+		return l_ret_val;
+	
+		exception
+			when others then
+				return l_ret_val;
+	
+	end major;
+
+	function minor (
+		semver						in				varchar2
+	)
+	return number
+	
+	as
+	
+		l_semver			semver_rec;
+		l_ret_val			number := -1;
+	
+	begin
+	
+		dbms_application_info.set_action('minor');
+
+		l_semver := parse_semver(semver);
+
+		l_ret_val := l_semver.minor;
+	
+		dbms_application_info.set_action(null);
+	
+		return l_ret_val;
+	
+		exception
+			when others then
+				return l_ret_val;
+	
+	end minor;
+
+	function patch (
+		semver						in				varchar2
+	)
+	return number
+	
+	as
+	
+		l_semver			semver_rec;
+		l_ret_val			number := -1;
+	
+	begin
+	
+		dbms_application_info.set_action('patch');
+
+		l_semver := parse_semver(semver);
+
+		l_ret_val := l_semver.patch;
+	
+		dbms_application_info.set_action(null);
+	
+		return l_ret_val;
+	
+		exception
+			when others then
+				return l_ret_val;
+	
+	end patch;
+
+	function gte (
+		semver						in				varchar2
+		, semver_compare			in				varchar2
+	)
+	return boolean
+	
+	as
+	
+		l_ret_val			boolean := false;
+		l_semver			semver_rec;
+		l_semver_compare	semver_rec;
+	
+	begin
+	
+		dbms_application_info.set_action('gte');
+
+		if valid(semver) and valid(semver_compare) then
+			l_semver := parse_semver(semver);
+			l_semver_compare := parse_semver(semver_compare);
+
+			if l_semver.major > l_semver_compare.major then
+				l_ret_val := true;
+			elsif l_semver.major = l_semver_compare.major and l_semver.minor > l_semver_compare.minor then
+				l_ret_val := true;
+			elsif l_semver.major = l_semver_compare.major and l_semver.minor = l_semver_compare.minor and l_semver.patch > l_semver_compare.patch then
+				l_ret_val := true;
+			elsif l_semver.major = l_semver_compare.major and l_semver.minor = l_semver_compare.minor and l_semver.patch = l_semver_compare.patch then
+				l_ret_val := true;
+			else
+				l_ret_val := false;
+			end if;
+		end if;
+	
+		dbms_application_info.set_action(null);
+	
+		return l_ret_val;
+	
+		exception
+			when others then
+				return l_ret_val;
+	
+	end gte;
+
+	function eq (
+		semver						in				varchar2
+		, semver_compare			in				varchar2
+	)
+	return boolean
+	
+	as
+	
+		l_ret_val			boolean := false;
+		l_semver			semver_rec;
+		l_semver_compare	semver_rec;
+	
+	begin
+	
+		dbms_application_info.set_action('eq');
+
+		if valid(semver) and valid(semver_compare) then
+			l_semver := parse_semver(semver);
+			l_semver_compare := parse_semver(semver_compare);
+
+			if l_semver.major = l_semver_compare.major and l_semver.minor = l_semver_compare.minor and l_semver.patch = l_semver_compare.patch then
+				l_ret_val := true;
+			else
+				l_ret_val := false;
+			end if;
+		end if;
+	
+		dbms_application_info.set_action(null);
+	
+		return l_ret_val;
+	
+		exception
+			when others then
+				return l_ret_val;
+	
+	end eq;
+
+	function lte (
+		semver						in				varchar2
+		, semver_compare			in				varchar2
+	)
+	return boolean
+	
+	as
+	
+		l_ret_val			boolean := false;
+	
+	begin
+	
+		dbms_application_info.set_action('lte');
+
+		if eq(semver, semver_compare) then
+			l_ret_val := true;
+		elsif gt(semver_compare, semver) then
+			l_ret_val := true;
+		else
+			l_ret_val := false;
+		end if;
+	
+		dbms_application_info.set_action(null);
+	
+		return l_ret_val;
+	
+		exception
+			when others then
+				dbms_application_info.set_action(null);
+				return l_ret_val;
+	
+	end lte;
+
+	function neq (
+		semver						in				varchar2
+		, semver_compare			in				varchar2
+	)
+	return boolean
+	
+	as
+	
+		l_ret_val			boolean := false;
+	
+	begin
+	
+		dbms_application_info.set_action('neq');
+
+		if eq(semver, semver_compare) then
+			l_ret_val := false;
+		else
+			l_ret_val := true;
+		end if;
+	
+		dbms_application_info.set_action(null);
+	
+		return l_ret_val;
+	
+		exception
+			when others then
+				dbms_application_info.set_action(null);
+				return l_ret_val;
+	
+	end neq;
+
+	function cmp (
+		semver						in				varchar2
+		, operator					in				varchar2
+		, semver_compare			in				varchar2
+	)
+	return boolean
+	
+	as
+	
+		l_ret_val			boolean := false;
+		l_semver			semver_rec;
+		l_semver_compare	semver_rec;
+	
+	begin
+	
+		dbms_application_info.set_action('cmp');
+
+		if valid(semver) and valid(semver_compare) then
+			if operator = '=' then
+				if eq(semver, semver_compare) then
+					l_ret_val := true;
+				end if;
+			elsif operator = '>=' then
+				if gte(semver, semver_compare) then
+					l_ret_val := true;
+				end if;
+			elsif operator = '<=' then
+				if lte(semver, semver_compare) then
+					l_ret_val := true;
+				end if;
+			elsif operator = '>' then
+				if gt(semver, semver_compare) then
+					l_ret_val := true;
+				end if;
+			elsif operator = '<' then
+				if lt(semver, semver_compare) then
+					l_ret_val := true;
+				end if;
+			end if;
+		else
+			l_ret_val := false;
+		end if;
+	
+		dbms_application_info.set_action(null);
+	
+		return l_ret_val;
+	
+		exception
+			when others then
+				dbms_application_info.set_action(null);
+				return l_ret_val;
+	
+	end cmp;
+
 begin
 
 	dbms_application_info.set_client_info('semver_ninja');

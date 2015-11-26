@@ -73,5 +73,97 @@ as
 	)
 	return varchar2;
 
+	/** Return the major of a semver version
+	* @author Morten Egan
+	* @param semver The semver string to extract major from
+	* @return number The major number (-1 if invalid semver)	
+	*/
+	function major (
+		semver						in				varchar2
+	)
+	return number;
+
+	/** Return the minor of a semver version
+	* @author Morten Egan
+	* @param semver The semver string to extract minor from
+	* @return number The minor number (-1 if invalid semver)
+	*/
+	function minor (
+		semver						in				varchar2
+	)
+	return number;
+
+	/** Return the patch of a semver version
+	* @author Morten Egan
+	* @param semver The semver string to extract patch from
+	* @return number The patch number (-1 if invalid semver)
+	*/
+	function patch (
+		semver						in				varchar2
+	)
+	return number;
+
+	/** Check if a version is greater than or equal to another version
+	* @author Morten Egan
+	* @param semver The semver to check for greater or equal
+	* @param semver_compare The semver to check against
+	* @return boolean True if greater or equal, False if not
+	*/
+	function gte (
+		semver						in				varchar2
+		, semver_compare			in				varchar2
+	)
+	return boolean;
+
+	/** Check if 2 versions are equal
+	* @author Morten Egan
+	* @param semver The semver to check for equality
+	* @param semver_compare The semver cersion to compare equality with
+	* @return boolean True if equal, False if not
+	*/
+	function eq (
+		semver						in				varchar2
+		, semver_compare			in				varchar2
+	)
+	return boolean;
+
+	/** Check if a version is less than or equal to another version
+	* @author Morten Egan
+	* @param semver The semver to check
+	* @param semver_compare the semver to compare with
+	* @return boolean True if less or equal to, False if not
+	*/
+	function lte (
+		semver						in				varchar2
+		, semver_compare			in				varchar2
+	)
+	return boolean;
+
+	/** Check for in-equality
+	* @author Morten Egan
+	* @param semver The semver to check
+	* @param semver_compare The semver to compare in-equality against
+	* @return boolean Return True if not equal, false if equal
+	*/
+	function neq (
+		semver						in				varchar2
+		, semver_compare			in				varchar2
+	)
+	return boolean;
+
+	/** Compare to semver versions from a operator
+	* @author Morten Egan
+	* @param semver The semver to check
+	* @param semver_compare The semver to compare against
+	* @param operator The operator to use
+	* @return boolean Return true if the operator succeeds
+	*/
+	function cmp (
+		semver						in				varchar2
+		, operator				in				varchar2
+		, semver_compare			in				varchar2
+	)
+	return boolean;
+
 end semver_ninja;
 /
