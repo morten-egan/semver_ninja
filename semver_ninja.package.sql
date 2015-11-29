@@ -160,8 +160,44 @@ as
 	*/
 	function cmp (
 		semver						in				varchar2
-		, operator				in				varchar2
+		, operator					in				varchar2
 		, semver_compare			in				varchar2
+	)
+	return boolean;
+
+	/** Compare 2 versions against each other directly
+	* @author Morten Egan
+	* @param semver The first semver string
+	* @param semver_compare The second semver string to compare against
+	* @return number 1 if first version is greater, 0 if equal or -1 if second is greater
+	*/
+	function compare (
+		semver						in				varchar2
+		, semver_compare			in				varchar2
+	)
+	return number;
+
+	/** Return the difference between 2 semver versions, by the name of the largest difference
+	* @author Morten Egan
+	* @param semver The first semver
+	* @param semver_compare The second semver to compare against
+	* @return varchar2 Return the highest component name with a difference (major, minor, patch)
+	*/
+	function diff (
+		semver						in				varchar2
+		, semver_compare			in				varchar2
+	)
+	return varchar2;
+
+	/** This is the main check, to see if a version is satisfied, within a range.
+	* @author Morten Egan
+	* @param semver The version to check
+	* @param logical_range The range to check against
+	* @return boolean True if satisfied within range, False if not
+	*/
+	function satisfies (
+		semver						in				varchar2
+		, logical_range				in				varchar2
 	)
 	return boolean;
 
